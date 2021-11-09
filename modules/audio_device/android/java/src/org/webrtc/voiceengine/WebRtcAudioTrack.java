@@ -130,8 +130,10 @@ public class WebRtcAudioTrack {
       super(name);
     }
 
+    //TODO:向AudioTrack中寫數據;
     @Override
     public void run() {
+      //TODO:設置線程優先級;
       Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
       Logging.d(TAG, "AudioTrackThread" + WebRtcAudioUtils.getThreadInfo());
       assertTrue(audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING);
@@ -215,11 +217,20 @@ public class WebRtcAudioTrack {
     }
   }
 
+  /**
+   * TODO:創建和初始化AudioTrack;
+   *
+   * @param sampleRate
+   * @param channels
+   * @param bufferSizeFactor
+   * @return
+   */
   private boolean initPlayout(int sampleRate, int channels, double bufferSizeFactor) {
     threadChecker.checkIsOnValidThread();
     Logging.d(TAG,
         "initPlayout(sampleRate=" + sampleRate + ", channels=" + channels
             + ", bufferSizeFactor=" + bufferSizeFactor + ")");
+    //TODO:準備數據緩衝區;
     final int bytesPerFrame = channels * (BITS_PER_SAMPLE / 8);
     byteBuffer = ByteBuffer.allocateDirect(bytesPerFrame * (sampleRate / BUFFERS_PER_SECOND));
     Logging.d(TAG, "byteBuffer.capacity: " + byteBuffer.capacity());

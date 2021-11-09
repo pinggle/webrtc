@@ -144,15 +144,18 @@ public class WebRtcAudioRecord {
     }
 
     // TODO(titovartem) make correct fix during webrtc:9175
+    // TODO:從AudioRecord讀取數據;
     @SuppressWarnings("ByteBufferBackingArray")
     @Override
     public void run() {
+      // 設置縣城優先級;
       Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
       Logging.d(TAG, "AudioRecordThread" + WebRtcAudioUtils.getThreadInfo());
       assertTrue(audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING);
 
       long lastTime = System.nanoTime();
       while (keepAlive) {
+        // 調用audioRecord.read不斷的讀取數據;
         int bytesRead = audioRecord.read(byteBuffer, byteBuffer.capacity());
         if (bytesRead == byteBuffer.capacity()) {
           if (microphoneMute) {
@@ -163,6 +166,10 @@ public class WebRtcAudioRecord {
           // failed to join this thread. To be a bit safer, try to avoid calling any native methods
           // in case they've been unregistered after stopRecording() returned.
           if (keepAlive) {
+            /**
+             * 不斷調用audioRecord.read讀取數據,把採集到的數據讀到ByteBuffer中,
+             * 然後調用nativeDataIsRecorded JNI函數通知native層數據已經讀到,進行下一步處理;
+             */
             nativeDataIsRecorded(bytesRead, nativeAudioRecord);
           }
           if (audioSamplesReadyCallback != null) {
@@ -233,8 +240,8 @@ public class WebRtcAudioRecord {
   }
 
   /**
-   * 1.准备好存数据的缓存区;
-   * 2.由于
+   *
+   * 創建和初始化AudioRecord;
    * @param sampleRate
    * @param channels
    * @return
@@ -248,6 +255,7 @@ public class WebRtcAudioRecord {
     final int bytesPerFrame = channels * (BITS_PER_SAMPLE / 8);
     final int framesPerBuffer = sampleRate / BUFFERS_PER_SECOND;
     /**
+     * TODO:1.准备好存数据的缓存区;
      * 实际使用数据的代码在native层,创建一个direct buffer;
      */
     byteBuffer = ByteBuffer.allocateDirect(bytesPerFrame * framesPerBuffer);
@@ -277,7 +285,14 @@ public class WebRtcAudioRecord {
     int bufferSizeInBytes = Math.max(BUFFER_SIZE_FACTOR * minBufferSize, byteBuffer.capacity());
     Logging.d(TAG, "bufferSizeInBytes: " + bufferSizeInBytes);
     try {
-      // sampleRate 采样率; channelConfig 声道数;
+      /**
+       * audioSource 指明音頻採集的模式;
+       * sampleRate 采样率;
+       * channelConfig 声道数;
+       * audioFormat 指明音頻數據格式;
+       * bufferSizeInBytes 指明系統創建AudioRecord時使用的緩衝區大小;
+        */
+
       audioRecord = new AudioRecord(audioSource, sampleRate, channelConfig,
           AudioFormat.ENCODING_PCM_16BIT, bufferSizeInBytes);
     } catch (IllegalArgumentException e) {
@@ -298,6 +313,10 @@ public class WebRtcAudioRecord {
     return framesPerBuffer;
   }
 
+  /**
+   * TODO:啓動錄制音頻;
+   * @return
+   */
   private boolean startRecording() {
     Logging.d(TAG, "startRecording");
     assertTrue(audioRecord != null);
@@ -321,9 +340,15 @@ public class WebRtcAudioRecord {
     return true;
   }
 
+  /**
+   * TODO:停止和銷毀AudioRecord;
+   * @return
+   */
   private boolean stopRecording() {
     Logging.d(TAG, "stopRecording");
     assertTrue(audioThread != null);
+    // TODO:1.首先把AudioRecordThread讀數據循環的keepAlive條件設置爲falst;
+    // 2.接着調用 ThreadUtils.joinUninterruptibly等待AudioRecordThread縣城退出;
     audioThread.stopThread();
     if (!ThreadUtils.joinUninterruptibly(audioThread, AUDIO_RECORD_THREAD_JOIN_TIMEOUT_MS)) {
       Logging.e(TAG, "Join of AudioRecordJavaThread timed out");
@@ -333,6 +358,7 @@ public class WebRtcAudioRecord {
     if (effects != null) {
       effects.release();
     }
+    // TODO:3.釋放AudioRecord對象;
     releaseAudioResources();
     return true;
   }

@@ -579,6 +579,7 @@ public class PeerConnectionClient {
     sdpMediaConstraints = new MediaConstraints();
     sdpMediaConstraints.mandatory.add(
         new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
+    //TODO: 創建Offer;
     sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair(
         "OfferToReceiveVideo", Boolean.toString(isVideoCallEnabled())));
   }
@@ -624,6 +625,7 @@ public class PeerConnectionClient {
     // NOTE: this _must_ happen while |factory| is alive!
     Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
 
+    // 音頻Source和Track的創建;
     List<String> mediaStreamLabels = Collections.singletonList("ARDAMS");
     if (isVideoCallEnabled()) {
       peerConnection.addTrack(createVideoTrack(videoCapturer), mediaStreamLabels);
@@ -817,6 +819,7 @@ public class PeerConnectionClient {
       if (peerConnection != null && !isError) {
         Log.d(TAG, "PC create ANSWER");
         isInitiator = false;
+        // 創建Answer沒有等待設置Offer成功;
         peerConnection.createAnswer(sdpObserver, sdpMediaConstraints);
       }
     });
@@ -865,6 +868,7 @@ public class PeerConnectionClient {
       }
       Log.d(TAG, "Set remote SDP.");
       SessionDescription sdpRemote = new SessionDescription(sdp.type, sdpDescription);
+      //TODO:這個函數會在收到來自Signaling Server的消息後被調用;
       peerConnection.setRemoteDescription(sdpObserver, sdpRemote);
     });
   }
