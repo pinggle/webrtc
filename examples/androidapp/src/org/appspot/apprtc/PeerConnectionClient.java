@@ -336,7 +336,9 @@ public class PeerConnectionClient {
     final String fieldTrials = getFieldTrials(peerConnectionParameters);
     executor.execute(() -> {
       Log.d(TAG, "Initialize WebRTC. Field trials: " + fieldTrials);
+      //TODO: webrtc 初始化;
       PeerConnectionFactory.initialize(
+              // TODO: InitializationOptions 加載動態庫 libjingle_peerconnection_so.so;
           PeerConnectionFactory.InitializationOptions.builder(appContext)
               .setFieldTrials(fieldTrials)
               .setEnableInternalTracer(true)

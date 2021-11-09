@@ -232,6 +232,13 @@ public class WebRtcAudioRecord {
     return effects.setNS(enable);
   }
 
+  /**
+   * 1.准备好存数据的缓存区;
+   * 2.由于
+   * @param sampleRate
+   * @param channels
+   * @return
+   */
   private int initRecording(int sampleRate, int channels) {
     Logging.d(TAG, "initRecording(sampleRate=" + sampleRate + ", channels=" + channels + ")");
     if (audioRecord != null) {
@@ -240,12 +247,16 @@ public class WebRtcAudioRecord {
     }
     final int bytesPerFrame = channels * (BITS_PER_SAMPLE / 8);
     final int framesPerBuffer = sampleRate / BUFFERS_PER_SECOND;
+    /**
+     * 实际使用数据的代码在native层,创建一个direct buffer;
+     */
     byteBuffer = ByteBuffer.allocateDirect(bytesPerFrame * framesPerBuffer);
     Logging.d(TAG, "byteBuffer.capacity: " + byteBuffer.capacity());
     emptyBytes = new byte[byteBuffer.capacity()];
     // Rather than passing the ByteBuffer with every callback (requiring
     // the potentially expensive GetDirectBufferAddress) we simply have the
     // the native class cache the address to the memory once.
+    // 在native层把bytebuffer的访问地址提前保存下来,避免每次读到音频数据后还需要调用接口获取访问地址;
     nativeCacheDirectBufferAddress(byteBuffer, nativeAudioRecord);
 
     // Get the minimum buffer size required for the successful creation of
@@ -266,6 +277,7 @@ public class WebRtcAudioRecord {
     int bufferSizeInBytes = Math.max(BUFFER_SIZE_FACTOR * minBufferSize, byteBuffer.capacity());
     Logging.d(TAG, "bufferSizeInBytes: " + bufferSizeInBytes);
     try {
+      // sampleRate 采样率; channelConfig 声道数;
       audioRecord = new AudioRecord(audioSource, sampleRate, channelConfig,
           AudioFormat.ENCODING_PCM_16BIT, bufferSizeInBytes);
     } catch (IllegalArgumentException e) {
