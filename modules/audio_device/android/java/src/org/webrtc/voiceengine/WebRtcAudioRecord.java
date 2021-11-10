@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;
 
+/**
+ * 錄制音頻;
+ */
 public class WebRtcAudioRecord {
   private static final boolean DEBUG = false;
 

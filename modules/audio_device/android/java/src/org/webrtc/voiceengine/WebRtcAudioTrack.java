@@ -25,6 +25,9 @@ import org.webrtc.ContextUtils;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;
 
+/**
+ * 播放音頻;
+ */
 public class WebRtcAudioTrack {
   private static final boolean DEBUG = false;
 
@@ -146,6 +149,10 @@ public class WebRtcAudioTrack {
         // Get 10ms of PCM data from the native WebRTC client. Audio data is
         // written into the common ByteBuffer using the address that was
         // cached at construction.
+        /**
+         * 在循環中,不停地調用nativeGetPlayoutData JNI函數,在native層把待播放的數據復制到ByteBuffer中,
+         * 然後調用audioTrack.write播放;
+         */
         nativeGetPlayoutData(sizeInBytes, nativeAudioTrack);
         // Write data until all data has been written to the audio sink.
         // Upon return, the buffer position will have been advanced to reflect
@@ -332,6 +339,10 @@ public class WebRtcAudioTrack {
     return true;
   }
 
+  /**
+   * 停止播放音頻;
+   * @return
+   */
   private boolean stopPlayout() {
     threadChecker.checkIsOnValidThread();
     Logging.d(TAG, "stopPlayout");
