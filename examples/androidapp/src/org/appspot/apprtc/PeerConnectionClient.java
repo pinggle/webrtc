@@ -611,11 +611,15 @@ public class PeerConnectionClient {
 
     if (dataChannelEnabled) {
       DataChannel.Init init = new DataChannel.Init();
+      // isOrdered：控制消息是否保证有序到达，默认是YES，即有序到达。
       init.ordered = peerConnectionParameters.dataChannelParameters.ordered;
+      // isNegotiated：控制对端是否自动创建DataChannel，默认是NO，即不需要协商自动创建；如果设置为YES，则需要设置channelId字段，且两端设置为相同的正数，创建的DataChannel才能用来收发消息；
       init.negotiated = peerConnectionParameters.dataChannelParameters.negotiated;
+      // maxRetransmits和maxPacketLifeTime用于控制ACK超时后的重传策略：前者控制重传的次数，后者控制消息的生命期，即发送后超过生命期都没有被ACK，则消息将会被丢弃。
       init.maxRetransmits = peerConnectionParameters.dataChannelParameters.maxRetransmits;
       init.maxRetransmitTimeMs = peerConnectionParameters.dataChannelParameters.maxRetransmitTimeMs;
       init.id = peerConnectionParameters.dataChannelParameters.id;
+      // protocol：WebRTC内部不会使用这个字段，App层可以加以利用，且两端可以设置不同的值。
       init.protocol = peerConnectionParameters.dataChannelParameters.protocol;
       dataChannel = peerConnection.createDataChannel("ApprtcDemo data", init);
     }

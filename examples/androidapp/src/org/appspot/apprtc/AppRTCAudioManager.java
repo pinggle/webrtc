@@ -30,6 +30,7 @@ import org.webrtc.ThreadUtils;
 
 /**
  * AppRTCAudioManager manages all audio related parts of the AppRTC demo.
+ * Android聲音路由;
  */
 public class AppRTCAudioManager {
   private static final String TAG = "AppRTCAudioManager";
@@ -194,6 +195,7 @@ public class AppRTCAudioManager {
   }
 
   @SuppressWarnings("deprecation") // TODO(henrika): audioManager.requestAudioFocus() is deprecated.
+  // TODO:開始音頻;
   public void start(AudioManagerEvents audioManagerEvents) {
     Log.d(TAG, "start");
     ThreadUtils.checkIsOnMainThread();

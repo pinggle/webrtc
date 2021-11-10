@@ -243,6 +243,7 @@ AudioCodingModuleImpl::AudioCodingModuleImpl(
 
 AudioCodingModuleImpl::~AudioCodingModuleImpl() = default;
 
+// TODO:音頻編碼;
 int32_t AudioCodingModuleImpl::Encode(const InputData& input_data) {
   AudioEncoder::EncodedInfo encoded_info;
   uint8_t previous_pltype;
@@ -272,6 +273,9 @@ int32_t AudioCodingModuleImpl::Encode(const InputData& input_data) {
 
   // Clear the buffer before reuse - encoded data will get appended.
   encode_buffer_.Clear();
+  // TODO:encoder_stack_是AudioEncoder的子類實例;
+  // Opus -> AudioEncoderOpusImpl:EncodeImpl;
+  // Opus默認20ms做一次編碼;
   encoded_info = encoder_stack_->Encode(
       rtp_timestamp,
       rtc::ArrayView<const int16_t>(
@@ -361,9 +365,12 @@ int AudioCodingModuleImpl::RegisterTransportCallback(
 }
 
 // Add 10MS of raw (PCM) audio data to the encoder.
+// TODO:音頻編碼;
 int AudioCodingModuleImpl::Add10MsData(const AudioFrame& audio_frame) {
   rtc::CritScope lock(&acm_crit_sect_);
+  // 講輸入的數據從audio_frame類型轉換爲InputData類型;
   int r = Add10MsDataInternal(audio_frame, &input_data_);
+  // 調用encode進行編碼;
   return r < 0 ? r : Encode(input_data_);
 }
 
@@ -591,6 +598,7 @@ int AudioCodingModuleImpl::IncomingPacket(const uint8_t* incoming_payload,
 
 // Get 10 milliseconds of raw audio data to play out.
 // Automatic resample to the requested frequency.
+// TODO:音頻解碼;
 int AudioCodingModuleImpl::PlayoutData10Ms(int desired_freq_hz,
                                            AudioFrame* audio_frame,
                                            bool* muted) {

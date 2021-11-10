@@ -340,6 +340,7 @@ public class JavaAudioDeviceModule implements AudioDeviceModule {
   public long getNativeAudioDeviceModulePointer() {
     synchronized (nativeLock) {
       if (nativeAudioDeviceModule == 0) {
+        //TODO:創建ADM(Audio Device Module音頻設備模塊),負責管理音頻設備、實現音頻採集和播放的模塊;
         nativeAudioDeviceModule = nativeCreateAudioDeviceModule(context, audioManager, audioInput,
             audioOutput, inputSampleRate, outputSampleRate, useStereoInput, useStereoOutput);
       }

@@ -18,6 +18,9 @@
 namespace webrtc {
 namespace jni {
 
+/**
+ * 創建ADM;
+**/
 static jlong JNI_JavaAudioDeviceModule_CreateAudioDeviceModule(
     JNIEnv* env,
     const JavaParamRef<jobject>& j_context,

@@ -65,6 +65,7 @@ class OpusFrame : public AudioDecoder::EncodedAudioFrame {
       rtc::ArrayView<int16_t> decoded) const override {
     AudioDecoder::SpeechType speech_type = AudioDecoder::kSpeech;
     int ret;
+    // TODO:判斷是否冗餘編碼包;
     if (is_primary_payload_) {
       ret = decoder_->Decode(
           payload_.data(), payload_.size(), decoder_->SampleRateHz(),

@@ -648,6 +648,12 @@ void GetAudioParameters(JNIEnv* env,
   RTC_CHECK(output_parameters->is_valid());
 }
 
+/**
+ * 創建ADM實現;
+ * 採集和播放的工作抽象爲AudioInput和AudioOutput;
+ * WebRtcAudioRecord -> AudioRecordJni;
+ * WebRtcAudioTrack -> AudioTrackJni;
+ */
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceModuleFromInputAndOutput(
     AudioDeviceModule::AudioLayer audio_layer,
     bool is_stereo_playout_supported,
